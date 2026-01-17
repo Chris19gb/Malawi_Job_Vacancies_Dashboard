@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malawi Job Vacancies Dashboard | Christopher Gama</title>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Charting Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    
+    <!-- Export Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="logo">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>Malawi Job Vacancies</h1>
+                    <p>Regional Distribution Dashboard</p>
+                </div>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <div class="nav-menu" id="navMenu">
+                <a href="#overview" class="nav-link active">
+                    <i class="fas fa-home"></i> 
+                    <span>Overview</span>
+                </a>
+                <a href="#regional" class="nav-link">
+                    <i class="fas fa-map"></i> 
+                    <span>Regional Analysis</span>
+                </a>
+                <a href="#trends" class="nav-link">
+                    <i class="fas fa-chart-line"></i> 
+                    <span>Trends</span>
+                </a>
+                <a href="#insights" class="nav-link">
+                    <i class="fas fa-lightbulb"></i> 
+                    <span>Insights</span>
+                </a>
+            </div>
+            
+            <div class="nav-actions">
+                <button class="btn btn-secondary" id="refreshBtn">
+                    <i class="fas fa-sync-alt"></i> 
+                    <span class="btn-text">Refresh</span>
+                </button>
+                <button class="btn btn-primary" id="exportBtn">
+                    <i class="fas fa-download"></i> 
+                    <span class="btn-text">Export</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Dashboard -->
+    <main class="dashboard">
+        <!-- Header Stats -->
+        <section class="stats-header">
+            <div class="stat-card primary">
+                <div class="stat-icon">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Total Distribution</h3>
+                    <div class="stat-value">100%</div>
+                    <div class="stat-change positive">Across 3 Regions</div>
+                </div>
+            </div>
+            
+            <div class="stat-card success">
+                <div class="stat-icon">
+                    <i class="fas fa-arrow-up"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Highest Region</h3>
+                    <div class="stat-value">Southern</div>
+                    <div class="stat-change">42.7% market share</div>
+                </div>
+            </div>
+            
+            <div class="stat-card warning">
+                <div class="stat-icon">
+                    <i class="fas fa-balance-scale"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Regional Variance</h3>
+                    <div class="stat-value">56.3%</div>
+                    <div class="stat-change">Difference highest & lowest</div>
+                </div>
+            </div>
+            
+            <div class="stat-card info">
+                <div class="stat-icon">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Data Source</h3>
+                    <div class="stat-value">Advert Shared</div>
+                    <div class="stat-change">Malawi Job Vacancies</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Charts Section -->
+        <section class="main-charts" id="overview">
+            <div class="chart-container full-width">
+                <div class="chart-header">
+                    <h2><i class="fas fa-chart-bar"></i> Monthly Advertisement Distribution</h2>
+                    <div class="chart-actions">
+                        <button class="btn-chart-action active" data-chart="bar">
+                            <i class="fas fa-chart-bar"></i> 
+                            <span class="action-text">Bar</span>
+                        </button>
+                        <button class="btn-chart-action" data-chart="line">
+                            <i class="fas fa-chart-line"></i> 
+                            <span class="action-text">Line</span>
+                        </button>
+                        <button class="btn-chart-action" data-chart="pie">
+                            <i class="fas fa-chart-pie"></i> 
+                            <span class="action-text">Pie</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-body">
+                    <canvas id="mainChart"></canvas>
+                </div>
+                <div class="chart-footer">
+                    <p><i class="fas fa-info-circle"></i> Data based on advert sharing frequency across regions</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Regional Analysis -->
+        <section class="regional-analysis" id="regional">
+            <h2 class="section-title">
+                <i class="fas fa-map-marked-alt"></i> 
+                <span>Regional Detailed Analysis</span>
+            </h2>
+            
+            <div class="region-cards">
+                <!-- Northern Region Card -->
+                <div class="region-card">
+                    <div class="region-header northern">
+                        <h3><i class="fas fa-mountain"></i> Northern Region</h3>
+                        <span class="region-tag">Limited Opportunities</span>
+                    </div>
+                    <div class="region-body">
+                        <div class="region-stat">
+                            <div class="stat-label">Monthly Range</div>
+                            <div class="stat-value">0-10 Adverts</div>
+                            <div class="stat-detail">(Average: 3 vacancies)</div>
+                        </div>
+                        <div class="region-stat">
+                            <div class="stat-label">Coverage Area</div>
+                            <div class="stat-value">Mzuzu & Surrounding</div>
+                        </div>
+                        <div class="region-stat">
+                            <div class="stat-label">Market Share</div>
+                            <div class="stat-value">20.0%</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 20%"></div>
+                            </div>
+                        </div>
+                        <div class="region-chart">
+                            <canvas id="northernChart" height="100"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Central Region Card -->
+                <div class="region-card">
+                    <div class="region-header central">
+                        <h3><i class="fas fa-landmark"></i> Central Region</h3>
+                        <span class="region-tag">Stable Market</span>
+                    </div>
+                    <div class="region-body">
+                        <div class="region-stat">
+                            <div class="stat-label">Monthly Average</div>
+                            <div class="stat-value">5.6 Adverts</div>
+                            <div class="stat-detail">Steady performance</div>
+                        </div>
+                        <div class="region-stat">
+                            <div class="stat-label">Coverage Area</div>
+                            <div class="stat-value">Lilongwe & Areas</div>
+                        </div>
+                        <div class="region-stat">
+                            <div class="stat-label">Market Share</div>
+                            <div class="stat-value">37.3%</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 37.3%"></div>
+                            </div>
+                        </div>
+                        <div class="region-chart">
+                            <canvas id="centralChart" height="100"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Southern Region Card -->
+                <div class="region-card">
+                    <div class="region-header southern">
+                        <h3><i class="fas fa-city"></i> Southern Region</h3>
+                        <span class="region-tag">Market Leader</span>
+                    </div>
+                    <div class="region-body">
+                        <div class="region-stat">
+                            <div class="stat-label">Monthly Average</div>
+                            <div class="stat-value">6.4 Adverts</div>
+                            <div class="stat-detail">Highest in Malawi</div>
+                        </div>
+                        <div class="region-stat">
+                            <div class="stat-label">Coverage Area</div>
+                            <div class="stat-value">Blantyre & Areas</div>
+                        </div>
+                        <div class="region-stat">
+                            <div class="stat-label">Market Share</div>
+                            <div class="stat-value">42.7%</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 42.7%"></div>
+                            </div>
+                        </div>
+                        <div class="region-chart">
+                            <canvas id="southernChart" height="100"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Market Share Analysis -->
+        <section class="trends-section" id="trends">
+            <h2 class="section-title">
+                <i class="fas fa-chart-line"></i> 
+                <span>Market Share Analysis</span>
+            </h2>
+            
+            <div class="trends-grid">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-percentage"></i> Regional Distribution (%)</h3>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="distributionChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-balance-scale-left"></i> Performance Comparison</h3>
+                    </div>
+                    <div class="chart-body">
+                        <canvas id="comparisonChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Insights & Recommendations -->
+        <section class="insights-section" id="insights">
+            <h2 class="section-title">
+                <i class="fas fa-lightbulb"></i> 
+                <span>Key Insights & Recommendations</span>
+            </h2>
+            
+            <div class="insights-grid">
+                <div class="insight-card">
+                    <div class="insight-icon insight-critical">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h4>Market Disparity</h4>
+                    <p>Northern Region receives significantly fewer job advertisements (only 20% market share), indicating regional economic imbalance.</p>
+                </div>
+                
+                <div class="insight-card">
+                    <div class="insight-icon insight-positive">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h4>Economic Hub</h4>
+                    <p>Southern Region leads with 42.7% market share, suggesting Blantyre as Malawi's primary economic and employment hub.</p>
+                </div>
+                
+                <div class="insight-card">
+                    <div class="insight-icon insight-suggestion">
+                        <i class="fas fa-hands-helping"></i>
+                    </div>
+                    <h4>Development Strategy</h4>
+                    <p>Recommend targeted economic initiatives in Northern Region to create balanced job opportunities across Malawi.</p>
+                </div>
+                
+                <div class="insight-card">
+                    <div class="insight-icon insight-data">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h4>Data Reliability</h4>
+                    <p>Based on Malawi Job Vacancies advert sharing data. Regular updates ensure accurate market trend analysis.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Table -->
+        <section class="data-section">
+            <h2 class="section-title">
+                <i class="fas fa-table"></i> 
+                <span>Advertisement Distribution Data</span>
+            </h2>
+            
+            <div class="data-table-container">
+                <div class="table-scroll">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Region</th>
+                                <th>Monthly Average</th>
+                                <th>Range</th>
+                                <th>Market Share</th>
+                                <th>Performance</th>
+                                <th>Trend</th>
+                                <th>Growth Potential</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><i class="fas fa-mountain"></i> Northern</td>
+                                <td>0-10 (Avg: 3)</td>
+                                <td>3 vacancies</td>
+                                <td>20.0%</td>
+                                <td><span class="status-badge status-low">Limited</span></td>
+                                <td><i class="fas fa-arrow-down trend-down"></i></td>
+                                <td>High</td>
+                            </tr>
+                            <tr>
+                                <td><i class="fas fa-landmark"></i> Central</td>
+                                <td>5.6</td>
+                                <td>5-6 vacancies</td>
+                                <td>37.3%</td>
+                                <td><span class="status-badge status-medium">Stable</span></td>
+                                <td><i class="fas fa-arrow-right trend-stable"></i></td>
+                                <td>Medium</td>
+                            </tr>
+                            <tr>
+                                <td><i class="fas fa-city"></i> Southern</td>
+                                <td>6.4</td>
+                                <td>6-7 vacancies</td>
+                                <td>42.7%</td>
+                                <td><span class="status-badge status-high">Strong</span></td>
+                                <td><i class="fas fa-arrow-up trend-up"></i></td>
+                                <td>Low</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="7" class="table-footer">
+                                    <i class="fas fa-info-circle"></i> 
+                                    <strong>Total Market Distribution:</strong> 100% | 
+                                    <strong>Data Source:</strong> Malawi Job Vacancies Advert Sharing
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <h3><i class="fas fa-chart-line"></i> Malawi Job Vacancies Dashboard</h3>
+                <p>Regional Advertisement Distribution Analysis | Based on Advert Shared Data</p>
+            </div>
+            
+            <div class="footer-info">
+                <div class="footer-section">
+                    <h4>Data Coverage</h4>
+                    <div class="footer-list">
+                        <div class="footer-item">
+                            <i class="fas fa-map-pin"></i>
+                            <span>Northern Region: Mzuzu</span>
+                        </div>
+                        <div class="footer-item">
+                            <i class="fas fa-map-pin"></i>
+                            <span>Central Region: Lilongwe</span>
+                        </div>
+                        <div class="footer-item">
+                            <i class="fas fa-map-pin"></i>
+                            <span>Southern Region: Blantyre</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Dashboard Info</h4>
+                    <div class="footer-list">
+                        <div class="footer-item">
+                            <i class="fas fa-code"></i>
+                            <span>Version: v1.0</span>
+                        </div>
+                        <div class="footer-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Updated: <span id="currentDate"></span></span>
+                        </div>
+                        <div class="footer-item">
+                            <i class="fas fa-database"></i>
+                            <span>Source: Advert Shared</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Contact Creator</h4>
+                    <div class="contact-links">
+                        <a href="https://wa.me/265990373438" target="_blank" class="contact-link" aria-label="Contact via WhatsApp">
+                            <i class="fab fa-whatsapp"></i>
+                            <div class="contact-text">
+                                <span class="contact-label">WhatsApp</span>
+                                <span class="contact-value">+265 990 373 438</span>
+                            </div>
+                        </a>
+                        <a href="mailto:macdalfchristopher@gmail.com" class="contact-link" aria-label="Send Email">
+                            <i class="fas fa-envelope"></i>
+                            <div class="contact-text">
+                                <span class="contact-label">Email</span>
+                                <span class="contact-value">macdalfchristopher@gmail.com</span>
+                            </div>
+                        </a>
+                        <a href="tel:+265990373438" class="contact-link" aria-label="Call Phone">
+                            <i class="fas fa-phone"></i>
+                            <div class="contact-text">
+                                <span class="contact-label">Phone</span>
+                                <span class="contact-value">+265 990 373 438</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-copyright">
+                <div class="creator-info">
+                    <div class="creator-profile">
+                        <div class="creator-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="creator-details">
+                            <h4>Created by: <strong>Christopher Gama</strong></h4>
+                            <p>Data Analyst & Dashboard Developer</p>
+                        </div>
+                    </div>
+                    <div class="creator-social">
+                        <a href="https://wa.me/265990373438" target="_blank" class="social-icon whatsapp" aria-label="WhatsApp">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                        <a href="mailto:macdalfchristopher@gmail.com" class="social-icon email" aria-label="Email">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                        <a href="tel:+265990373438" class="social-icon phone" aria-label="Phone">
+                            <i class="fas fa-phone"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="tech-stack">
+                    <span class="tech-tag"><i class="fas fa-chart-bar"></i> Chart.js</span>
+                    <span class="tech-tag"><i class="fab fa-html5"></i> HTML5</span>
+                    <span class="tech-tag"><i class="fab fa-css3"></i> CSS3</span>
+                    <span class="tech-tag"><i class="fab fa-js"></i> JavaScript</span>
+                    <span class="tech-tag"><i class="fab fa-github"></i> GitHub Pages</span>
+                </div>
+                
+                <div class="data-disclaimer">
+                    <p>
+                        <i class="fas fa-info-circle"></i> 
+                        <strong>Data Note:</strong> Figures represent percentage distribution based on advert sharing frequency, not absolute vacancy counts.
+                    </p>
+                    <p class="copyright">
+                        © 2026 Malawi Job Vacancies Dashboard | Created by Christopher Gama. All rights reserved.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Export Modal -->
+    <div class="modal" id="exportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-download"></i> Export Dashboard</h3>
+                <button class="modal-close" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="export-options">
+                    <div class="export-option" data-format="png">
+                        <div class="export-icon">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div class="export-info">
+                            <h4>PNG Image</h4>
+                            <p>High-quality image of the dashboard</p>
+                        </div>
+                    </div>
+                    
+                    <div class="export-option" data-format="pdf">
+                        <div class="export-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div class="export-info">
+                            <h4>PDF Document</h4>
+                            <p>Printable PDF with all charts</p>
+                        </div>
+                    </div>
+                    
+                    <div class="export-option" data-format="excel">
+                        <div class="export-icon">
+                            <i class="fas fa-file-excel"></i>
+                        </div>
+                        <div class="export-info">
+                            <h4>Excel Data</h4>
+                            <p>Raw data in spreadsheet format</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-close">Cancel</button>
+                <button class="btn btn-primary" id="confirmExport">Export Selected</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="js/utils.js"></script>
+    <script src="js/chart.js"></script>
+    
+    <!-- Initialize Dashboard -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current date
+            document.getElementById('currentDate').textContent = 
+                new Date().toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            
+            // Initialize all charts
+            if (typeof initializeCharts === 'function') {
+                initializeCharts();
+            }
+            
+            // Navigation
+            if (typeof setupNavigation === 'function') {
+                setupNavigation();
+            }
+            
+            // Mobile menu
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const navMenu = document.getElementById('navMenu');
+            
+            if (mobileMenuBtn && navMenu) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    navMenu.classList.toggle('active');
+                    this.classList.toggle('active');
+                });
+            }
+            
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(event) {
+                if (navMenu && mobileMenuBtn && 
+                    !navMenu.contains(event.target) && 
+                    !mobileMenuBtn.contains(event.target) && 
+                    navMenu.classList.contains('active')) {
+                    navMenu.classList.remove('active');
+                    mobileMenuBtn.classList.remove('active');
+                }
+            });
+            
+            // Export functionality
+            if (typeof setupExport === 'function') {
+                setupExport();
+            }
+            
+            // Chart type switching
+            if (typeof setupChartSwitching === 'function') {
+                setupChartSwitching();
+            }
+            
+            // Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        // Close mobile menu if open
+                        if (navMenu && navMenu.classList.contains('active')) {
+                            navMenu.classList.remove('active');
+                            mobileMenuBtn.classList.remove('active');
+                        }
+                        
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
